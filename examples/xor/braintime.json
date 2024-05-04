@@ -1,0 +1,10 @@
+{
+    "model": "@braintime/feed-forward",
+    "train": {
+        "data": "training-data.json",
+        "options": {
+            "errorThresh": 0.011,
+            "iterations": 1000
+        }
+    }
+}
