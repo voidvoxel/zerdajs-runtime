@@ -4,6 +4,8 @@ import { fork } from 'child_process';
 import { PluginManager } from 'live-plugin-manager';
 import { PackageJSON } from '@voidvoxel/package-json';
 import path from 'path';
+import { existsSync } from 'fs';
+import { BraintimeModule } from './BraintimeModule.mjs';
 
 
 export class Braintime {
@@ -68,19 +70,18 @@ export class Braintime {
         // Initialize the runtime environment.
         await this.#initialize();
 
-        // Load the `PackageJSON`.
-        const packageJSON = await PackageJSON.readFile(modulePath);
+        // Resolve the module path.
+        modulePath = path.resolve(modulePath);
 
-        // Evaluate the main file of the module.
-        await this.evalFile(
-            path.resolve(
-                path.join(
-                    modulePath,
-                    packageJSON.main
-                )
-            ),
-            forkOptions ?? {}
-        );
+        // Require the module.
+        return await this.require(modulePath);
+    }
+
+
+    async require (moduleName) {
+        const braintimeModule = new BraintimeModule(moduleName);
+
+        return await braintimeModule.require();
     }
 
 
@@ -94,7 +95,12 @@ export class Braintime {
         this.#npm = new PluginManager(
             {
                 cwd: this.#cwd,
-                pluginsPath: this.#nodeModulesPath
+                pluginsPath: path.resolve(
+                    path.join(
+                        this.#cwd,
+                        this.#nodeModulesPath
+                    )
+                )
             }
         );
 
