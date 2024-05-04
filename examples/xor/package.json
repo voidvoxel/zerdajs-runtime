@@ -1,6 +1,8 @@
 {
     "name": "xor",
-    "main": "index.mjs",
+    "version": "0.0.0",
+    "main": "index.js",
+    "type": "module",
     "scripts": {
         "build": "braintime-build ."
     },
