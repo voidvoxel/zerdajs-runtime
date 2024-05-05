@@ -77,7 +77,11 @@ async function main (args) {
     lineReader.on(
         'line',
         (inputString) => {
-            const input = JSON.parse(inputString);
+            let input = JSON.parse(inputString);
+
+            if (typeof input[0] === 'undefined') {
+                input = [ input ];
+            }
 
             const output = f(...input);
 
