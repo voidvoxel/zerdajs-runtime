@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+
+
 import readline  from 'readline';
 
 

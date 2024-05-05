@@ -4,6 +4,9 @@
   "description": "Braintime AI framework | Cross-platform | Modular | Wide GPU support",
   "main": "src/index.mjs",
   "type": "module",
+  "bin": {
+    "brain": "bin/brain.mjs"
+  },
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
