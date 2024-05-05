@@ -1,5 +1,5 @@
-import { existsSync, mkdirSync, rmSync } from "fs";
-import { mkdir, rm } from "fs/promises";
+import { cpSync, existsSync, mkdirSync, rmSync } from "fs";
+import { mkdir, rm, writeFile } from "fs/promises";
 import { tmpdir } from "os";
 import path from "path";
 
@@ -18,7 +18,7 @@ const BRAINTIME_TMP_DIR = path.resolve(
 const BRAINTIME_MODULE_CACHE_DIR = path.resolve(
     path.join(
         BRAINTIME_TMP_DIR,
-        "module_cache",
+        "modules",
     )
 );
 
@@ -44,8 +44,13 @@ export class BraintimeModule {
      */
     #temporary
 
+    /**
+     * @type {string}
+     */
+    #tmpdir
 
-    static async clearModuleCache () {
+
+    static async clearCache () {
         await rm(
             BRAINTIME_MODULE_CACHE_DIR,
             {
@@ -74,6 +79,8 @@ export class BraintimeModule {
 
         this.#temporary = options.temporary ?? false;
 
+        this.#tmpdir = null;
+
         if (existsSync(moduleName)) {
             const modulePath = moduleName;
 
@@ -88,8 +95,7 @@ export class BraintimeModule {
 
         const cwd = path.resolve(
             path.join(
-                BRAINTIME_TMP_DIR,
-                "modules",
+                BRAINTIME_MODULE_CACHE_DIR,
                 moduleName
             )
         );
@@ -129,6 +135,22 @@ export class BraintimeModule {
                 )
             }
         );
+
+        const nodeModulesPath = path.resolve(
+            path.join(
+                cwd,
+                'node_modules'
+            )
+        );
+
+        const modulePath = path.resolve(
+            path.join(
+                nodeModulesPath,
+                this.#packageJSON.name
+            )
+        );
+
+        this.#tmpdir = modulePath;
     }
 
 
@@ -157,17 +179,44 @@ export class BraintimeModule {
      * @returns {Promise<Function<number[], number[]>>}
      */
     async require () {
+        const tmpModuleDir = path.resolve(
+            path.join(
+                BRAINTIME_TMP_DIR,
+                '.tmp_modules',
+                this.#packageJSON.name
+            )
+        );
+
+        cpSync(
+            this.#path,
+            tmpModuleDir,
+            {
+                force: true,
+                recursive: true
+            }
+        );
+
+        // TODO: Convert all module imports to CommonJS requires.
+
         if (this.#path && existsSync(this.#path)) {
             const packageJSON = await PackageJSON.readFile(this.#path);
 
             this.name = packageJSON.name;
 
             if (!this.#npm.alreadyInstalled(this.name)) {
-                const { location, name } = await this.#npm.installFromPath(this.#path);
+                const { location, name } = await this.#npm.installFromPath(tmpModuleDir);
 
                 this.name = name;
             }
         }
+
+        rmSync(
+            tmpModuleDir,
+            {
+                force: true,
+                recursive: true
+            }
+        );
 
         return this.#npm.require(this.name);
     }
