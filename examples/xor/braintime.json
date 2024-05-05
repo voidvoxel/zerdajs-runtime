@@ -1,5 +1,10 @@
 {
     "model": "@braintime/feed-forward",
+    "layers": {
+        "input": 2,
+        "hidden": [ 3 ],
+        "output": 1
+    },
     "train": {
         "data": "training-data.json",
         "options": {

@@ -2,9 +2,7 @@ import { fork } from 'child_process';
 
 
 import { PluginManager } from 'live-plugin-manager';
-import { PackageJSON } from '@voidvoxel/package-json';
 import path from 'path';
-import { existsSync } from 'fs';
 import { BraintimeModule } from './BraintimeModule.mjs';
 
 
@@ -63,10 +61,7 @@ export class Braintime {
     }
 
 
-    async evalModule (
-        modulePath,
-        forkOptions = {}
-    ) {
+    async evalModule (modulePath) {
         // Initialize the runtime environment.
         await this.#initialize();
 
@@ -81,7 +76,9 @@ export class Braintime {
     async require (moduleName) {
         const braintimeModule = new BraintimeModule(moduleName);
 
-        return await braintimeModule.require();
+        await braintimeModule.require();
+
+        return braintimeModule;
     }
 
 

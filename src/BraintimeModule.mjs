@@ -28,6 +28,11 @@ export class BraintimeModule {
     #npm
 
     /**
+     * @type {PackageJSON}
+     */
+    #packageJSON
+
+    /**
      * @type {string}
      */
     #path
@@ -72,9 +77,10 @@ export class BraintimeModule {
 
             const packageJSON = PackageJSON.readFileSync(modulePath);
 
+            this.#packageJSON = packageJSON;
+
             moduleName = packageJSON.name;
 
-            this.name = moduleName;
             this.#path = modulePath;
         }
 
@@ -124,6 +130,20 @@ export class BraintimeModule {
     }
 
 
+    /**
+     * Get the `PackageJSON` of this `BraintimeModule`.
+     * @returns {PackageJSON}
+     * The `PackageJSON` of this `BraintimeModule`.
+     */
+    getPackageJSON () {
+        return this.#packageJSON;
+    }
+
+
+    /**
+     * Require the module.
+     * @returns {Promise<Function<number[], number[]>>}
+     */
     async require () {
         if (this.#path && existsSync(this.#path)) {
             const packageJSON = await PackageJSON.readFile(this.#path);
@@ -138,5 +158,18 @@ export class BraintimeModule {
         }
 
         return this.#npm.require(this.name);
+    }
+
+
+    async loadPackageJSON () {
+        this.#packageJSON = await PackageJSON.readFile(this.#path);
+    }
+
+
+    async savePackageJSON () {
+        await PackageJSON.writeFile(
+            this.#path,
+            this.#packageJSON
+        );
     }
 }

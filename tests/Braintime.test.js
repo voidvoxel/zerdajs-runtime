@@ -2,7 +2,7 @@ import { Braintime } from "../src/index.mjs";
 
 
 test(
-    "initialize braintime",
+    "run module `xor`",
     async () => {
         const exampleDir = "examples/xor";
 
@@ -12,9 +12,12 @@ test(
             }
         );
 
-        const xor = await braintime.evalModule(exampleDir);
+        const xorModule = await braintime.evalModule(exampleDir);
+        const xorExports = await xorModule.require();
 
-        expect(typeof xor).toBe('function');
+        expect(typeof xorExports).toBe('function');
+
+        const xor = (x, y) => xorExports(x, y)[0];
 
         expect(xor(0, 0)).toBe(0);
         expect(xor(0, 1)).toBe(1);

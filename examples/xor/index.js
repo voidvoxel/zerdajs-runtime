@@ -63,7 +63,7 @@ function xor (x, y) {
     const input = [ x, y ];
 
     // Return the neural network's prediction of `x` XOR `y`.
-    return Math.round(nn.run(input)[0]);
+    return [ Math.round(nn.run(input)[0]) ];
 }
 
 
