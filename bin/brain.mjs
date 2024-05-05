@@ -61,8 +61,6 @@ async function main (args) {
 
     const braintimeModule = await braintime.evalModule(modulePath);
 
-    const braintimeJSON = structuredClone(braintimeModule.getPackageJSON().braintime);
-
     const f = await braintimeModule.require();
 
     const lineReader = readline.createInterface(
