@@ -1,6 +1,6 @@
 {
   "name": "braintime",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Braintime AI framework | Cross-platform | Modular | Wide GPU support",
   "main": "src/index.mjs",
   "type": "module",
