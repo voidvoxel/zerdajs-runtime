@@ -143,6 +143,16 @@ export class BraintimeModule {
 
 
     /**
+     * Get the layer structure of the model.
+     * @returns {*}
+     * The structure of the model.
+     */
+    layers () {
+        return structuredClone(this.#packageJSON.braintime.layers);
+    }
+
+
+    /**
      * Require the module.
      * @returns {Promise<Function<number[], number[]>>}
      */
