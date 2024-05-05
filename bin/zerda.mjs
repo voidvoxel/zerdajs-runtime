@@ -4,10 +4,10 @@
 import readline  from 'readline';
 
 
-import { Braintime } from "../src/index.mjs";
-import { BraintimeModule } from '../src/BraintimeModule.mjs';
+import { ZerdaRuntime } from "../src/index.mjs";
+import { ZerdaRuntimeModule } from '../src/ZerdaRuntimeModule.mjs';
 
-const braintime = new Braintime();
+const zerdaRuntime = new ZerdaRuntime();
 
 
 /**
@@ -50,7 +50,7 @@ function log (...lines) {
 const HELP_TEXT = [
     "Usage:",
     "",
-    "braintime <module>    | Run <module>, installing if necessary.",
+    "zerdaRuntime <module>    | Run <module>, installing if necessary.",
     "                      | Input is read from `stdin`.",
     "                      | Output is written to `stdout`."
 ];
@@ -64,14 +64,14 @@ async function main (args) {
     const modulePath = args[0];
 
     if (modulePath === '--clear-cache') {
-        await BraintimeModule.clearCache();
+        await ZerdaRuntimeModule.clearCache();
 
         process.exit();
     }
 
-    const braintimeModule = await braintime.evalModule(modulePath);
+    const zerdaRuntimeModule = await zerdaRuntime.evalModule(modulePath);
 
-    const f = await braintimeModule.require();
+    const f = await zerdaRuntimeModule.require();
 
     const lineReader = readline.createInterface(
         {

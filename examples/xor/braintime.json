@@ -1,5 +1,5 @@
 {
-    "model": "@braintime/feed-forward",
+    "model": "@zerdaRuntime/feed-forward",
     "layers": {
         "input": 2,
         "hidden": [ 3 ],

@@ -1,25 +1,40 @@
 {
-  "name": "braintime",
+  "name": "@zerda.js/runtime",
   "version": "0.1.1",
-  "description": "Braintime AI framework | Cross-platform | Modular | Wide GPU support",
+  "description": "Zerda.js Runtime Environment | Cross-platform | Modular | Wide GPU support",
   "main": "src/index.mjs",
   "type": "module",
   "bin": {
-    "brain": "bin/brain.mjs"
+    "zerda": "bin/zerda.mjs"
   },
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
-  "keywords": [],
+  "keywords": [
+    "ai",
+    "neural",
+    "network",
+    "framework",
+    "zerda",
+    "zerda.js",
+    "runtime",
+    "environment",
+    "re",
+    "zerda re",
+    "zerda-re",
+    "zerda-runtime",
+    "zerda-runtime-environment"
+  ],
   "author": "Ashlynne Juniper",
   "license": "MPL-2.0",
   "devDependencies": {
-    "jest": "^29.7.0",
-    "pkg": "^5.8.1"
+    "jest": "^29.7.0"
   },
   "dependencies": {
     "@voidvoxel/package-json": "^1.0.0",
     "brain.js": "^2.0.0-beta.23",
+    "glob": "^10.3.12",
+    "javascript-injector": "^0.3.0",
     "live-plugin-manager": "^0.20.0"
   },
   "jest": {

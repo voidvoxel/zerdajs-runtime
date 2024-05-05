@@ -4,16 +4,16 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "build": "braintime-build ."
+        "build": "zerdaRuntime-build ."
     },
     "dependencies": {
         "brain.js": "^2.0.0-beta.23"
     },
     "devDependencies": {
-        "@braintime/build": "0.0.0"
+        "@zerdaRuntime/build": "0.0.0"
     },
-    "braintime": {
-        "model": "@braintime/feed-forward",
+    "zerdaRuntime": {
+        "model": "@zerdaRuntime/feed-forward",
         "layers": {
             "input": 2,
             "hidden": [ 3 ],

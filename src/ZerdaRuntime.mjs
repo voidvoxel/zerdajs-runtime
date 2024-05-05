@@ -4,18 +4,18 @@ import path from 'path';
 
 
 import { PluginManager } from 'live-plugin-manager';
-import { BraintimeModule } from './BraintimeModule.mjs';
+import { ZerdaRuntimeModule } from './ZerdaRuntimeModule.mjs';
 
 
 const BRAINTIME_TMP_DIR = path.resolve(
     path.join(
         tmpdir(),
-        "braintime"
+        "zerdaRuntime"
     )
 );
 
 
-export class Braintime {
+export class ZerdaRuntime {
     /**
      * @type {string}
      */
@@ -101,11 +101,11 @@ export class Braintime {
 
 
     async require (moduleName) {
-        const braintimeModule = new BraintimeModule(moduleName);
+        const zerdaRuntimeModule = new ZerdaRuntimeModule(moduleName);
 
-        await braintimeModule.require();
+        await zerdaRuntimeModule.require();
 
-        return braintimeModule;
+        return zerdaRuntimeModule;
     }
 
 

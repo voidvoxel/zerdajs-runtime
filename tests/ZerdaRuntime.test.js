@@ -1,4 +1,4 @@
-import { Braintime } from "../src/index.mjs";
+import { ZerdaRuntime } from "../src/index.mjs";
 
 
 test(
@@ -6,13 +6,13 @@ test(
     async () => {
         const exampleDir = "examples/xor";
 
-        const braintime = new Braintime(
+        const zerdaRuntime = new ZerdaRuntime(
             {
                 cwd: exampleDir
             }
         );
 
-        const xorModule = await braintime.evalModule(exampleDir);
+        const xorModule = await zerdaRuntime.evalModule(exampleDir);
         const xorExports = await xorModule.require();
 
         expect(typeof xorExports).toBe('function');

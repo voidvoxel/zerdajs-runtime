@@ -1,9 +1,11 @@
-import { cpSync, existsSync, mkdirSync, rmSync } from "fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "fs";
 import { mkdir, rm, writeFile } from "fs/promises";
 import { tmpdir } from "os";
 import path from "path";
 
 
+import { globSync } from "glob";
+import { JavaScriptInjector } from "javascript-injector";
 import { PluginManager } from "live-plugin-manager";
 import { PackageJSON } from "@voidvoxel/package-json";
 
@@ -11,7 +13,7 @@ import { PackageJSON } from "@voidvoxel/package-json";
 const BRAINTIME_TMP_DIR = path.resolve(
     path.join(
         tmpdir(),
-        "braintime"
+        "zerdaRuntime"
     )
 );
 
@@ -23,7 +25,7 @@ const BRAINTIME_MODULE_CACHE_DIR = path.resolve(
 );
 
 
-export class BraintimeModule {
+export class ZerdaRuntimeModule {
     /**
      * @type {PluginManager}
      */
@@ -151,13 +153,15 @@ export class BraintimeModule {
         );
 
         this.#tmpdir = modulePath;
+
+        this.#injectGlobalsSync();
     }
 
 
     /**
-     * Get the `PackageJSON` of this `BraintimeModule`.
+     * Get the `PackageJSON` of this `ZerdaRuntimeModule`.
      * @returns {PackageJSON}
-     * The `PackageJSON` of this `BraintimeModule`.
+     * The `PackageJSON` of this `ZerdaRuntimeModule`.
      */
     getPackageJSON () {
         return this.#packageJSON;
@@ -170,7 +174,7 @@ export class BraintimeModule {
      * The structure of the model.
      */
     layers () {
-        return structuredClone(this.#packageJSON.braintime.layers);
+        return structuredClone(this.#packageJSON.zerdaRuntime.layers);
     }
 
 
@@ -232,5 +236,32 @@ export class BraintimeModule {
             this.#path,
             this.#packageJSON
         );
+    }
+
+
+    #injectGlobalsSync () {
+        const modulePaths = globSync(`${this.#tmpdir}/**/*.js`);
+
+        this.#_injectGlobalsSync(...modulePaths);
+    }
+
+
+    #_injectGlobalsSync (...modulePaths) {
+        for (let modulePath of modulePaths) {
+            const sourceCode = readFileSync(
+                modulePath,
+                'utf-8'
+            );
+
+            const injector = new JavaScriptInjector(sourceCode);
+
+            injector.addHeader(`globalThis.brain = require('brain.js')`);
+
+            writeFileSync(
+                modulePath,
+                injector.toString(),
+                'utf-8'
+            );
+        }
     }
 }
