@@ -34,7 +34,7 @@
     "@voidvoxel/package-json": "^1.0.0",
     "brain.js": "^2.0.0-beta.23",
     "glob": "^10.3.12",
-    "javascript-injector": "^0.3.0",
+    "javascript-injector": "^0.3.1",
     "live-plugin-manager": "^0.20.0"
   },
   "jest": {
