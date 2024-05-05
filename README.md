@@ -60,5 +60,5 @@ echo "[0, 1]" | brain examples/xor
 #### Process an input file
 
 ```sh
-cat input.json | brain examples/xor > output.txt
+cat samples/input.json | brain examples/xor > samples/output.txt
 ```
