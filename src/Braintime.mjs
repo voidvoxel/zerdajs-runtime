@@ -1,9 +1,18 @@
 import { fork } from 'child_process';
+import { tmpdir } from 'os';
+import path from 'path';
 
 
 import { PluginManager } from 'live-plugin-manager';
-import path from 'path';
 import { BraintimeModule } from './BraintimeModule.mjs';
+
+
+const BRAINTIME_TMP_DIR = path.resolve(
+    path.join(
+        tmpdir(),
+        "braintime"
+    )
+);
 
 
 export class Braintime {
@@ -21,6 +30,24 @@ export class Braintime {
      * @type {PluginManager}
      */
     #npm
+
+
+    static async clearCache () {
+        await rm(
+            BRAINTIME_TMP_DIR,
+            {
+                force: true,
+                recursive: true
+            }
+        );
+
+        await mkdir(
+            BRAINTIME_TMP_DIR,
+            {
+                recursive: true
+            }
+        );
+    }
 
 
     constructor (
