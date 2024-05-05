@@ -5,6 +5,7 @@ import readline  from 'readline';
 
 
 import { Braintime } from "../src/index.mjs";
+import { BraintimeModule } from '../src/BraintimeModule.mjs';
 
 const braintime = new Braintime();
 
@@ -62,6 +63,12 @@ async function main (args) {
 
     const modulePath = args[0];
 
+    if (modulePath === '--clear-cache') {
+        await BraintimeModule.clearCache();
+
+        process.exit();
+    }
+
     const braintimeModule = await braintime.evalModule(modulePath);
 
     const f = await braintimeModule.require();
@@ -77,6 +84,8 @@ async function main (args) {
     lineReader.on(
         'line',
         (inputString) => {
+            inputString = inputString.trim();
+
             let input = JSON.parse(inputString);
 
             if (typeof input[0] === 'undefined') {
