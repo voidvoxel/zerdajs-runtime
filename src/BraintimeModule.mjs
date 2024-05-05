@@ -1,9 +1,11 @@
-import { PackageJSON } from "@voidvoxel/package-json";
-import { existsSync, mkdirSync, readdirSync, rmSync, rmdirSync } from "fs";
+import { existsSync, mkdirSync, rmSync } from "fs";
 import { mkdir, rm } from "fs/promises";
-import { PluginManager } from "live-plugin-manager";
 import { tmpdir } from "os";
 import path from "path";
+
+
+import { PluginManager } from "live-plugin-manager";
+import { PackageJSON } from "@voidvoxel/package-json";
 
 
 const BRAINTIME_TMP_DIR = path.resolve(

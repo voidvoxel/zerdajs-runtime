@@ -1,10 +1,6 @@
 import readline  from 'readline';
 
 
-import BlockStream from "block-stream";
-
-
-import { BraintimeModule } from "../src/BraintimeModule.mjs";
 import { Braintime } from "../src/index.mjs";
 
 const braintime = new Braintime();
