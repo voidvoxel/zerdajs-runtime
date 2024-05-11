@@ -128,3 +128,6 @@ dist
 
 # Examples output
 samples/output.txt
+
+# Installed plugins
+plugins/
