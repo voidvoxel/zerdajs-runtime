@@ -5,7 +5,7 @@ import readline  from 'readline';
 
 
 import { ZerdaRuntime } from "../src/index.mjs";
-import { ZerdaRuntimeModule } from '../src/ZerdaRuntimeModule.mjs';
+
 
 const zerdaRuntime = new ZerdaRuntime();
 
@@ -50,7 +50,7 @@ function log (...lines) {
 const HELP_TEXT = [
     "Usage:",
     "",
-    "zerdaRuntime <module>    | Run <module>, installing if necessary.",
+    " <module>    | Run <module>, installing if necessary.",
     "                      | Input is read from `stdin`.",
     "                      | Output is written to `stdout`."
 ];
@@ -64,14 +64,12 @@ async function main (args) {
     const modulePath = args[0];
 
     if (modulePath === '--clear-cache') {
-        await ZerdaRuntimeModule.clearCache();
+        // await ZerdaRuntimeModule.clearCache();
 
         process.exit();
     }
 
-    const zerdaRuntimeModule = await zerdaRuntime.evalModule(modulePath);
-
-    const f = await zerdaRuntimeModule.require();
+    const f = await zerdaRuntime.require(modulePath);
 
     const lineReader = readline.createInterface(
         {
@@ -92,7 +90,7 @@ async function main (args) {
                 input = [ input ];
             }
 
-            const output = f(...input);
+            const output = f(input);
 
             const outputString = JSON.stringify(output);
 
