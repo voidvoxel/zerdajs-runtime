@@ -19,32 +19,24 @@ and you'll have a distributed AI network put together in no time.
 
 ## Installation
 
-### Global
+### Install the command-line interface
 
-#### To install globally
+To install globally to use from the command line,
+please run the following command:
 
 ```sh
 npm i -g @zerda.js/runtime
 ```
 
-### Dependency
+### Install as a dependency
+
+To install as a dependency to use as a library,
+please run the following command:
 
 #### To install as a dependency
 
 ```sh
 npm i @zerda.js/runtime
-```
-
-#### To use as a dependency
-
-```json
-{
-    "name": "@voidvoxel/auto-encoder",
-    "main": "src/index.mjs",
-    "scripts": {
-        "start": "zerda ."
-    }
-}
 ```
 
 ## Usage
@@ -54,11 +46,11 @@ npm i @zerda.js/runtime
 #### Process a string
 
 ```sh
-echo "[0, 1]" | zerda examples/xor
+echo "[ 0, 1 ]" | zerda gh:voidvoxel/zerda-example-plugin
 ```
 
 #### Process an input file
 
 ```sh
-cat samples/input.json | zerda examples/xor > samples/output.txt
+cat samples/input.json | zerda examples/zerda-example-plugin > samples/output.json
 ```
