@@ -127,7 +127,7 @@ dist
 .pnp.*
 
 # Examples output
-samples/output.txt
+samples/output.json
 
 # Installed plugins
 plugins/
