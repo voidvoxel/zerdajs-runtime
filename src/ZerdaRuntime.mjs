@@ -56,6 +56,9 @@ export class ZerdaRuntime {
     }
 
 
+    /**
+     * Clear the runtime cache.
+     */
     static async clearCache () {
         // TODO: Throw an error if lock file exists.
 
