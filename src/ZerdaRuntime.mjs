@@ -284,7 +284,7 @@ export class ZerdaRuntime {
             {
                 cwd: this.#cwd,
                 pluginsPath: getAbsolutePath(
-                    this.#cwd,
+                    ZerdaRuntime.cachedir(),
                     'plugins'
                 )
             }
@@ -309,3 +309,20 @@ export class ZerdaRuntime {
         );
     }
 }
+
+
+if (!isDirectorySync(ZerdaRuntime.cachedir())) {
+    await ZerdaRuntime.clearCache();
+}
+
+
+process.on(
+    'exit',
+    async () => await rm(
+        ZerdaRuntime.tmpdir(),
+        {
+            force: true,
+            recursive: true
+        }
+    )
+);
