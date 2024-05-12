@@ -41,7 +41,7 @@ npm i @zerda.js/runtime
 
 ## Usage
 
-### Command line interface
+### How to use the command line interface
 
 #### Process a string
 
