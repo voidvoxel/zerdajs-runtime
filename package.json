@@ -8,8 +8,6 @@
     "zerda": "bin/zerda.mjs"
   },
   "scripts": {
-    "preinstall": "echo preinstall",
-    "postinstall": "echo postinstall",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "keywords": [
