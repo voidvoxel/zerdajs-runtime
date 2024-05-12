@@ -52,5 +52,36 @@ echo "[ 0, 1 ]" | zerda gh:voidvoxel/zerda-example-plugin
 #### Process an input file
 
 ```sh
-cat samples/input.json | zerda examples/zerda-example-plugin > samples/output.json
+cat samples/input.json | zerda gh:voidvoxel/zerda-example-plugin > samples/output.json
+```
+
+### How to use as a library
+
+```js
+import ZerdaRuntime from "@zerda.js/runtime";
+
+
+// Create a new runtime instance.
+const zerdaRuntime = new ZerdaRuntime();
+
+// Get the plugin.
+const plugin = zerdaRuntime.evalGitHub("gh:voidvoxel/zerda-example-plugin");
+
+// Set the input values.
+const input = [ 1, 2 ];
+
+// Get the output values.
+const output = plugin(input);
+
+// Log the input values.
+console.log(
+    "input:",
+    JSON.stringify(input)
+);
+
+// Log the output values.
+console.log(
+    "output:",
+    JSON.stringify(output)
+);
 ```
