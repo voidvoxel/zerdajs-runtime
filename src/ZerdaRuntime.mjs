@@ -1,5 +1,5 @@
 import { fork } from 'child_process';
-import { tmpdir } from 'os';
+import { homedir, tmpdir } from 'os';
 import path from 'path';
 
 
@@ -15,14 +15,16 @@ import { mkdir, rm } from 'fs/promises';
 import { existsSync } from 'fs';
 import { git } from 'git-cli-api';
 import { randomInt } from 'crypto';
+import randomInteger from '@voidvoxel/random-integer';
 
 
-const BRAINTIME_TMP_DIR = path.resolve(
-    path.join(
-        tmpdir(),
-        "zerda"
-    )
-);
+const SESSION_ID
+    = randomInteger(
+        0x00000000,
+        0xFFFFFFFF
+    ).toString(
+        16
+    );
 
 
 export class ZerdaRuntime {
@@ -42,9 +44,21 @@ export class ZerdaRuntime {
     #pluginManager
 
 
+    /**
+     * The cache directory used by this framework.
+     */
+    static cachedir () {
+        return getAbsolutePath(
+            homedir(),
+            ".zerda",
+            "runtime"
+        );
+    }
+
+
     static async clearCache () {
         await rm(
-            BRAINTIME_TMP_DIR,
+            ZerdaRuntime.tmpdir(),
             {
                 force: true,
                 recursive: true
@@ -52,10 +66,24 @@ export class ZerdaRuntime {
         );
 
         await mkdir(
-            BRAINTIME_TMP_DIR,
+            ZerdaRuntime.tmpdir(),
             {
                 recursive: true
             }
+        );
+    }
+
+
+    /**
+     * The temporary directory used by this framework.
+     */
+    static tmpdir () {
+        return getAbsolutePath(
+            tmpdir(),
+            "node_modules",
+            "@zerda.js",
+            "runtime",
+            SESSION_ID
         );
     }
 
