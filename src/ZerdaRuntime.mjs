@@ -154,6 +154,13 @@ export class ZerdaRuntime {
         // Stringify `moduleName`.
         moduleName = `${moduleName}`;
 
+        if (moduleName.startsWith("gh:")) {
+            moduleName = moduleName.replace(
+                "gh:",
+                "github:"
+            );
+        }
+
         // Initialize the runtime environment.
         await this.#initialize();
 
