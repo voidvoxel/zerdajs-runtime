@@ -57,16 +57,20 @@ export class ZerdaRuntime {
 
 
     static async clearCache () {
+        // TODO: Throw an error if lock file exists.
+
+        // Remove the cache directory.
         await rm(
-            ZerdaRuntime.tmpdir(),
+            ZerdaRuntime.cachedir(),
             {
                 force: true,
                 recursive: true
             }
         );
 
+        // Create the cache directory.
         await mkdir(
-            ZerdaRuntime.tmpdir(),
+            ZerdaRuntime.cachedir(),
             {
                 recursive: true
             }
