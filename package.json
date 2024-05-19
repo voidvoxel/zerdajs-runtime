@@ -46,7 +46,8 @@
     "javascript-injector": "^0.3.1",
     "live-plugin-manager": "file:../live-plugin-manager",
     "pathify": "github:voidvoxel/pathify",
-    "zerda-example-plugin": "github:zerdajs/example-plugin"
+    "semver": "^7.6.2",
+    "zerda-example-plugin": "^1.0.0-alpha.1"
   },
   "jest": {
     "transform": {}

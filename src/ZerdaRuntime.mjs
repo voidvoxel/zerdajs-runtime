@@ -13,6 +13,7 @@ import { PluginManager } from 'live-plugin-manager';
 import randomInteger from '@voidvoxel/random-integer';
 import { git } from 'git-cli-api';
 import { getAbsolutePath, isDirectorySync } from 'pathify';
+import * as semver from "semver";
 
 
 import ZerdaPlugin from './ZerdaPlugin.mjs';
@@ -296,6 +297,52 @@ export class ZerdaRuntime {
 
             moduleExports = this.#pluginManager.require(moduleName);
         } else {
+            if (moduleName.substring(1).includes("@")) {
+                if (moduleName[0] === "@") {
+                    const [ name, version ] = moduleName.substring(1).split("@");
+
+                    moduleName = "@" + name;
+
+                    let info;
+
+                    try {
+                        info = await this.#pluginManager.install(moduleName, version);
+                    } catch {
+                        info = await this.#pluginManager.install(moduleName);
+
+                        if (semver.valid(version)) {
+                            if (!semver.satisfies(info.version, version)) {
+                                throw new Error(`Version \`${info.version}\` does not meet requirement \`${version}\`.`);
+                            }
+                        }
+                    }
+                } else {
+                    const [ name, version ] = moduleName.split("@");
+
+                    moduleName = name;
+
+                    let info;
+
+                    try {
+                        info = await this.#pluginManager.install(moduleName, version);
+                    } catch {
+                        try {
+                            info = await this.#pluginManager.install(moduleName);
+
+                            if (semver.valid(version)) {
+                                if (!semver.satisfies(info.version, version)) {
+                                    throw new Error(`Version \`${info.version}\` does not meet requirement \`${version}\`.`);
+                                }
+                            }
+                        } catch (error) {
+                            throw error;
+                        }
+                    }
+                }
+            } else {
+                await this.#pluginManager.install(moduleName);
+            }
+
             moduleExports = this.#pluginManager.require(moduleName);
         }
 
@@ -325,17 +372,6 @@ export class ZerdaRuntime {
                     'plugins'
                 )
             }
-        );
-
-        // Install all built-in dependencies.
-        await this.#installBrainJS();
-    }
-
-
-    async #installBrainJS () {
-        await this.#pluginManager.install(
-            'brain.js',
-            '^2.0.0-beta.23'
         );
     }
 

@@ -6,6 +6,9 @@ import { parseArgs } from "util";
 
 
 import { ZerdaRuntime } from "../src/index.mjs";
+import { getAbsolutePath, isDirectorySync } from 'pathify';
+import path from 'path';
+import { readFile } from 'fs/promises';
 
 
 /**
@@ -42,10 +45,9 @@ const PARSE_ARGS_OPTIONS = {
         short: 'h',
         default: false
     },
-    'plugin': {
+    'project': {
         type: 'string',
-        short: 'p',
-        multiple: true
+        short: 'p'
     },
     'usage': {
         type: 'boolean',
@@ -180,6 +182,7 @@ async function main () {
     try {
         args = parseArgs(
             {
+                allowPositionals: true,
                 args: process.argv.splice(2),
                 options: PARSE_ARGS_OPTIONS
             }
@@ -194,8 +197,31 @@ async function main () {
 
     const pluginNames = [];
 
-    if (args.values.plugin) {
-        pluginNames.push(...args.values.plugin);
+    if (args.values.project) {
+        let projectDirectory;
+        let projectFile;
+
+        if (isDirectorySync(args.values.project)) {
+            projectDirectory = args.values.project;
+            projectFile = "zerda.json";
+        } else {
+            projectDirectory = path.dirname(args.values.project);
+            path.basename(args.values.project);
+        }
+
+        const projectJSONPath = getAbsolutePath(projectDirectory, projectFile);
+
+        const projectJSON = JSON.parse(
+            await readFile(projectJSONPath, "utf8")
+        );
+
+        for (let pluginName of projectJSON.plugins) {
+            pluginNames.push(pluginName);
+        }
+    }
+
+    if (args.positionals) {
+        pluginNames.push(...args.positionals);
     }
 
     const shouldClearCache = args.values['clear-cache'];
