@@ -71,6 +71,7 @@ const PARSE_ARGS_OPTIONS = {
     },
     'usage': {
         type: 'boolean',
+        short: 'u',
         default: false
     },
     'version': {
