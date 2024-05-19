@@ -1,4 +1,7 @@
 {
+    "files": {
+        "*.txt": ".json"
+    },
     "plugins": [
         "zerda-example-plugin",
         "zerda-example-plugin",
