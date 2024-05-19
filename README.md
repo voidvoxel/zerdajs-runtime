@@ -1,5 +1,7 @@
 # `@zerda.js/runtime`
 
+[![Known Vulnerabilities](https://snyk.io/test/github/zerdajs/runtime/badge.svg)](https://snyk.io/test/github/zerdajs/runtime)
+
 Zerda.js Runtime Environment | Cross-platform | Modular | Wide GPU support
 
 ## What is the Zerda.js Runtime Environment?

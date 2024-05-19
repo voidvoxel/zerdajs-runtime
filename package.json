@@ -8,7 +8,8 @@
     "zerda": "bin/zerda.mjs"
   },
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "clear-cache": "node bin/zerda.mjs --clear-cache",
+    "test": "npm run clear-cache && node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "keywords": [
     "ai",
@@ -27,6 +28,10 @@
   ],
   "author": "Ashlynne Juniper",
   "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/zerda.js/runtime/issues"
+  },
+  "homepage": "https://github.com/zerda.js/runtime#readme",
   "devDependencies": {
     "jest": "^29.7.0"
   },
@@ -35,14 +40,18 @@
     "@voidvoxel/random-integer": "^1.0.1",
     "brain.js": "^2.0.0-beta.23",
     "corestore": "^6.18.2",
-    "git-cli-api": "^0.1.3",
+    "git-cli-api": "^0.1.4",
     "glob": "^10.3.12",
     "hyperdrive": "^11.8.1",
     "javascript-injector": "^0.3.1",
-    "live-plugin-manager": "^0.20.0",
-    "pathify": "github:voidvoxel/pathify"
+    "live-plugin-manager": "file:../live-plugin-manager",
+    "pathify": "github:voidvoxel/pathify",
+    "zerda-example-plugin": "github:zerdajs/example-plugin"
   },
   "jest": {
     "transform": {}
+  },
+  "engines": {
+    "node": ">=20.13.1"
   }
 }

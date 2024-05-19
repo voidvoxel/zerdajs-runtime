@@ -1,4 +1,6 @@
 import { fork } from 'child_process';
+import { existsSync } from 'fs';
+import { mkdir, rm } from 'fs/promises';
 import { homedir, tmpdir } from 'os';
 import path from 'path';
 
@@ -8,14 +10,12 @@ import { default as Hyperdrive } from 'hyperdrive';
 import { PluginManager } from 'live-plugin-manager';
 
 
-// import { ZerdaModule } from './ZerdaModule.mjs';
-// import { ZerdaPackageManager } from './ZerdaPackageManager.mjs';
-import { getAbsolutePath, isDirectorySync } from 'pathify';
-import { mkdir, rm } from 'fs/promises';
-import { existsSync } from 'fs';
-import { git } from 'git-cli-api';
-import { randomInt } from 'crypto';
 import randomInteger from '@voidvoxel/random-integer';
+import { git } from 'git-cli-api';
+import { getAbsolutePath, isDirectorySync } from 'pathify';
+
+
+import ZerdaPlugin from './ZerdaPlugin.mjs';
 
 
 const SESSION_ID
@@ -132,6 +132,9 @@ export class ZerdaRuntime {
 
 
     async evalGitHub (repositoryName) {
+        // Initialize the runtime environment.
+        await this.#initialize();
+
         return this.require("github:" + repositoryName);
     }
 
@@ -165,13 +168,30 @@ export class ZerdaRuntime {
         await this.#initialize();
 
         // Require the module.
-        let zerdaRuntimeModule;
+        let moduleExports;
 
+        const MODULE_NAME_FILE_PREFIX = "file://";
         const MODULE_NAME_GITHUB_PREFIX = "github:";
         const MODULE_NAME_HYPER_PREFIX = "hyper:";
 
 
-        if (
+        if (moduleName.startsWith(MODULE_NAME_FILE_PREFIX)) {
+            let modulePath
+                =   moduleName.substring(
+                        MODULE_NAME_FILE_PREFIX.length
+                    );
+
+            modulePath = path.resolve(modulePath);
+
+            // Install the module.
+            const installedPluginInfo = await this.#installFromPath(modulePath);
+
+            // Update the module name.
+            moduleName = installedPluginInfo.name;
+
+            // Require the module.
+            moduleExports = this.#pluginManager.require(moduleName);
+        } else if (
             moduleName.startsWith(MODULE_NAME_GITHUB_PREFIX)
         ) {
             // Get the repository name.
@@ -183,13 +203,16 @@ export class ZerdaRuntime {
             // Get the repository's GitHub URL from the repository name.
             const repositoryURL = "https://github.com/" + repositoryName + ".git";
 
-            const tmpDirId = randomInt(1_000_000_000);
+            const tmpDirId
+                = randomInteger(
+                    0x00000000,
+                    0xffffffff
+                ).toString(
+                    16
+                );
 
             const tmpPath = getAbsolutePath(
-                tmpdir(),
-                "node_modules",
-                "@zerda.js",
-                "runtime",
+                ZerdaRuntime.tmpdir(),
                 tmpDirId.toString()
             );
 
@@ -206,7 +229,7 @@ export class ZerdaRuntime {
             moduleName = installedPluginInfo.name;
 
             // Require the module.
-            zerdaRuntimeModule = this.#pluginManager.require(moduleName);
+            moduleExports = this.#pluginManager.require(moduleName);
 
             // Remove the temporary directory.
             await rm(
@@ -261,22 +284,29 @@ export class ZerdaRuntime {
 
             // TODO: await snapshot.get(fileName) for each file in the snapshot
 
-            zerdaRuntimeModule = this.#pluginManager.require(moduleName);
+            moduleExports = this.#pluginManager.require(moduleName);
         } else if (
             isDirectorySync(moduleName)
         ) {
             const modulePath = getAbsolutePath(moduleName);
 
-            const moduleInfo = await this.#installFromPath(installFromPath);
+            const moduleInfo = await this.#installFromPath(modulePath);
 
             moduleName = moduleInfo.name;
 
-            zerdaRuntimeModule = this.#pluginManager.require(modulePath);
+            moduleExports = this.#pluginManager.require(moduleName);
         } else {
-            zerdaRuntimeModule = this.#pluginManager.require(moduleName);
+            moduleExports = this.#pluginManager.require(moduleName);
         }
 
-        return zerdaRuntimeModule;
+        const plugin = new ZerdaPlugin(
+            moduleExports,
+            {
+                name: moduleName
+            }
+        );
+
+        return moduleExports;
     }
 
 
