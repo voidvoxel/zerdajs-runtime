@@ -62,7 +62,7 @@ const PARSE_ARGS_OPTIONS = {
     },
     'lines': {
         type: 'boolean',
-        short: 'L'
+        short: 'l'
     },
     'project': {
         type: 'string',
