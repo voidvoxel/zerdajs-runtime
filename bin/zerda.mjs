@@ -227,7 +227,7 @@ async function main () {
                 path.dirname(args.values.project)
             );
 
-            path.basename(args.values.project);
+            projectFile = path.basename(args.values.project);
         }
 
         // Get the path to the project file.
