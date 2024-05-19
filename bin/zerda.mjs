@@ -46,6 +46,11 @@ const HELP_TEXT = [
  * @version 1.0.0
  */
 const PARSE_ARGS_OPTIONS = {
+    'stdin': {
+        type: 'boolean',
+        short: 'I',
+        default: false
+    },
     'clear-cache': {
         type: 'boolean',
         short: 'C',
@@ -215,7 +220,10 @@ async function main () {
     let PROJECT_JSON = null;
     let PROJECT_JSON_PATH = null;
 
-    if (args.values.project) {
+    console.debug(args.values)
+
+    // If a project file was provided and flag `--stdin` was not passed:
+    if (!args.values.stdin && args.values.project) {
         let projectDirectory;
         let projectFile;
 
@@ -250,17 +258,15 @@ async function main () {
                 path.join(projectDirectory, inputPattern)
             );
 
+            // For each input file that matches the input pattern:
             for (const inputPath of inputPaths) {
-                const inputRelativePath = path.relative(
-                    projectDirectory,
-                    path.resolve(inputPath)
-                );
-
+                // Get the output path.
                 const outputPath = setFileExtension(
                     inputPath,
                     PROJECT_JSON.files[inputPattern]
                 );
 
+                // Add this key-value pair to the file IO map.
                 FILE_IO_MAP[inputPath] = outputPath;
             }
         }
