@@ -1,15 +1,17 @@
 #!/usr/bin/env node
 
 
+import { readFile, writeFile } from 'fs/promises';
+import path from 'path';
 import readline  from 'readline';
 import { parseArgs } from "util";
 
 
-import { ZerdaRuntime } from "../src/index.mjs";
-import { getAbsolutePath, isDirectorySync, setFileExtension } from 'pathify';
-import path from 'path';
-import { readFile, writeFile } from 'fs/promises';
 import { glob } from 'glob';
+import { getAbsolutePath, isDirectorySync, setFileExtension } from 'pathify';
+
+
+import { ZerdaRuntime } from "../src/index.mjs";
 
 
 /**
