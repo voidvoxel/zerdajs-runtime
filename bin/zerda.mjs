@@ -46,9 +46,8 @@ const HELP_TEXT = [
  * @version 1.0.0
  */
 const PARSE_ARGS_OPTIONS = {
-    'stdin': {
+    'stream': {
         type: 'boolean',
-        short: 'I',
         default: false
     },
     'clear-cache': {
@@ -222,8 +221,8 @@ async function main () {
 
     console.debug(args.values)
 
-    // If a project file was provided and flag `--stdin` was not passed:
-    if (!args.values.stdin && args.values.project) {
+    // If a project file was provided and flag `--stream` was not passed:
+    if (!args.values.stream && args.values.project) {
         let projectDirectory;
         let projectFile;
 
