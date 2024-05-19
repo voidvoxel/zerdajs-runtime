@@ -1,12 +1,8 @@
 #!/usr/bin/env node
 
 
-import { rm } from "fs/promises";
 import readline  from 'readline';
 import { parseArgs } from "util";
-
-
-import { getAbsolutePath } from "pathify";
 
 
 import { ZerdaRuntime } from "../src/index.mjs";
@@ -149,20 +145,20 @@ function log (...lines) {
  *
  * @private
  * @since v0.3.1
- * @version 1.0.0
+ * @version 2.0.0
  *
  * @param {any[]} input
  * @param  {...any} plugins
  * @returns {any}
  */
-function applyPlugins (
+async function applyPlugins (
     input,
     ...plugins
 ) {
     let output = input;
 
     for (let plugin of plugins) {
-        output = plugin(output);
+        output = await plugin.run(output);
     }
 
     return output;
@@ -232,7 +228,7 @@ async function main () {
 
     lineReader.on(
         'line',
-        (inputString) => {
+        async inputString => {
             inputString = inputString.trim();
 
             let input = JSON.parse(inputString);
@@ -241,7 +237,7 @@ async function main () {
                 input = [ input ];
             }
 
-            const output = applyPlugins(
+            const output = await applyPlugins(
                 input,
                 ...plugins
             );
