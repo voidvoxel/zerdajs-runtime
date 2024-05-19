@@ -48,6 +48,7 @@ const HELP_TEXT = [
 const PARSE_ARGS_OPTIONS = {
     'stream': {
         type: 'boolean',
+        short: 's',
         default: false
     },
     'clear-cache': {
