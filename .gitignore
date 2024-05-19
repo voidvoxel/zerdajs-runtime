@@ -127,6 +127,7 @@ dist
 .pnp.*
 
 # Examples output
+samples/input.json
 samples/output.json
 samples/output.txt
 
