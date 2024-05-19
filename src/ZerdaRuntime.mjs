@@ -331,7 +331,15 @@ export class ZerdaRuntime {
 
                             if (semver.valid(version)) {
                                 if (!semver.satisfies(info.version, version)) {
-                                    throw new Error(`Version \`${info.version}\` does not meet requirement \`${version}\`.`);
+                                    let errorMessage
+                                        =   "Version `"
+                                        +   info.version
+                                        +   "` does not meet requirement `"
+                                        +   version
+                                        +   "`."
+                                    ;
+
+                                    throw new Error(errorMessage);
                                 }
                             }
                         } catch (error) {
