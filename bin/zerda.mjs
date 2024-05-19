@@ -224,8 +224,6 @@ async function main () {
     let PROJECT_JSON = null;
     let PROJECT_JSON_PATH = null;
 
-    console.debug(args.values)
-
     // If a project file was provided and flag `--stream` was not passed:
     if (!args.values.stream && args.values.project) {
         let projectDirectory;

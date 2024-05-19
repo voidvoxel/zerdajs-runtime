@@ -16,9 +16,6 @@ import { getAbsolutePath, isDirectorySync } from 'pathify';
 import * as semver from "semver";
 
 
-import ZerdaPlugin from './ZerdaPlugin.mjs';
-
-
 const SESSION_ID
     = randomInteger(
         0x00000000,
@@ -353,13 +350,6 @@ export class ZerdaRuntime {
 
             moduleExports = this.#pluginManager.require(moduleName);
         }
-
-        const plugin = new ZerdaPlugin(
-            moduleExports,
-            {
-                name: moduleName
-            }
-        );
 
         return moduleExports;
     }
