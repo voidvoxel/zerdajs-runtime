@@ -51,10 +51,28 @@ npm i @zerda.js/runtime
 echo "[ 0, 1 ]" | zerda gh:voidvoxel/zerda-example-plugin
 ```
 
-#### Process an input file
+#### Run a zerda project
 
 ```sh
-cat samples/input.json | zerda gh:voidvoxel/zerda-example-plugin > samples/output.json
+zerda -p ./samples
+```
+
+or
+
+```sh
+zerda -p ./samples/zerda.json
+```
+
+#### Process an input file (npm)
+
+```sh
+cat samples/numbers.txt | zerda zerda-example-plugin zerda-example-plugin > samples/numbers.json
+```
+
+#### Process an input file (GitHub)
+
+```sh
+cat samples/numbers.txt | zerda gh:voidvoxel/zerda-example-plugin > samples/numbers.json
 ```
 
 ### How to use as a library
