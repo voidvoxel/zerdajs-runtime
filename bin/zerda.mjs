@@ -318,7 +318,13 @@ async function main () {
                     }
 
                     // Parse the line as a JSON array.
-                    let input = JSON.parse(inputString);
+                    let input;
+
+                    try {
+                        input = JSON.parse(inputString);
+                    } catch {
+                        input = inputString;
+                    }
 
                     // If this is a single object, add it to an array.
                     if (typeof input[0] === 'undefined') {
@@ -353,7 +359,13 @@ async function main () {
                 }
 
                 // Parse the line as a JSON array.
-                let input = JSON.parse(inputString);
+                let input;
+
+                try {
+                    input = JSON.parse(inputString);
+                } catch {
+                    input = inputString;
+                }
 
                 // If this is a single object, add it to an array.
                 if (typeof input[0] === 'undefined') {
