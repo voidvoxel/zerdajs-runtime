@@ -6,9 +6,20 @@ import { parseArgs } from "util";
 
 
 import { ZerdaRuntime } from "../src/index.mjs";
-import { getAbsolutePath, isDirectorySync } from 'pathify';
+import { getAbsolutePath, isDirectorySync, setFileExtension } from 'pathify';
 import path from 'path';
-import { readFile } from 'fs/promises';
+import { readFile, writeFile } from 'fs/promises';
+import { glob } from 'glob';
+
+
+/**
+ * A mapping of input files to output files.
+ *
+ * @private
+ * @since v0.1.0
+ * @version 1.0.0
+ */
+const FILE_IO_MAP = [];
 
 
 /**
@@ -205,18 +216,46 @@ async function main () {
             projectDirectory = args.values.project;
             projectFile = "zerda.json";
         } else {
-            projectDirectory = path.dirname(args.values.project);
+            projectDirectory = path.resolve(
+                path.dirname(args.values.project)
+            );
+
             path.basename(args.values.project);
         }
 
+        // Get the path to the project file.
         const projectJSONPath = getAbsolutePath(projectDirectory, projectFile);
 
+        // Load the project file.
         const projectJSON = JSON.parse(
             await readFile(projectJSONPath, "utf8")
         );
 
+        // Add all plugins from the project file.
         for (let pluginName of projectJSON.plugins) {
             pluginNames.push(pluginName);
+        }
+
+        // Add all input files from the project file.
+        for (let inputPattern in projectJSON.files) {
+            // Get a list of input files that match the input file pattern.
+            const inputPaths = await glob(
+                path.join(projectDirectory, inputPattern)
+            );
+
+            for (const inputPath of inputPaths) {
+                const inputRelativePath = path.relative(
+                    projectDirectory,
+                    path.resolve(inputPath)
+                );
+
+                const outputPath = setFileExtension(
+                    inputPath,
+                    projectJSON.files[inputPattern]
+                );
+
+                FILE_IO_MAP[inputPath] = outputPath;
+            }
         }
     }
 
@@ -244,35 +283,95 @@ async function main () {
         plugins.push(pluginExports);
     }
 
-    const lineReader = readline.createInterface(
-        {
-            input: process.stdin,
-            output: process.stdout,
-            terminal: false
-        }
-    );
+    const PROJECT_FILE_PATH = Object.keys(FILE_IO_MAP).length >= 1;
 
-    lineReader.on(
-        'line',
-        async inputString => {
-            inputString = inputString.trim();
+    if (PROJECT_FILE_PATH) {
+        /* Project file; read project file and process all IO. */
 
-            let input = JSON.parse(inputString);
-
-            if (typeof input[0] === 'undefined') {
-                input = [ input ];
-            }
-
-            const output = await applyPlugins(
-                input,
-                ...plugins
+        for (let inputPath in FILE_IO_MAP) {
+            // Read the input file.
+            let inputFileString = await readFile(
+                inputPath,
+                "utf-8"
             );
 
-            const outputString = JSON.stringify(output);
+            // Set the output file to an empty string.
+            let outputFileString = "";
 
-            console.log(outputString);
+            // For each line of the input file:
+            for (let inputString of inputFileString.split("\n")) {
+                // Trim the line.
+                inputString = inputString.trim();
+
+                // If the line is empty, return.
+                if (inputString === "") {
+                    continue;
+                }
+
+                // Parse the line as a JSON array.
+                let input = JSON.parse(inputString);
+
+                // If this is a single object, add it to an array.
+                if (typeof input[0] === 'undefined') {
+                    input = [ input ];
+                }
+
+                // Process the input through each plugin.
+                const output = await applyPlugins(
+                    input,
+                    ...plugins
+                );
+
+                // Get the output line.
+                const outputString = JSON.stringify(output);
+
+                // Add the output line to the string.
+                outputFileString += outputString + "\n";
+            }
+
+            const outputPath = FILE_IO_MAP[inputPath];
+
+            await writeFile(
+                outputPath,
+                outputFileString,
+                "utf-8"
+            );
         }
-    );
+    } else {
+        const lineReader = readline.createInterface(
+            {
+                input: process.stdin,
+                output: process.stdout,
+                terminal: false
+            }
+        );
+
+        lineReader.on(
+            'line',
+            async inputString => {
+                inputString = inputString.trim();
+
+                let input = JSON.parse(inputString);
+
+                if (typeof input[0] === 'undefined') {
+                    input = [ input ];
+                }
+
+                const output = await applyPlugins(
+                    input,
+                    ...plugins
+                );
+
+                const outputString = JSON.stringify(output);
+
+                console.log(outputString);
+            }
+        );
+    }
+
+    if (PROJECT_FILE_PATH) {
+        process.exit();
+    }
 }
 
 
