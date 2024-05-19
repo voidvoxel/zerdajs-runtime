@@ -56,6 +56,10 @@ const PARSE_ARGS_OPTIONS = {
         short: 'h',
         default: false
     },
+    'lines': {
+        type: 'boolean',
+        short: 'L'
+    },
     'project': {
         type: 'string',
         short: 'p'
@@ -208,6 +212,9 @@ async function main () {
 
     const pluginNames = [];
 
+    let PROJECT_JSON = null;
+    let PROJECT_JSON_PATH = null;
+
     if (args.values.project) {
         let projectDirectory;
         let projectFile;
@@ -224,20 +231,20 @@ async function main () {
         }
 
         // Get the path to the project file.
-        const projectJSONPath = getAbsolutePath(projectDirectory, projectFile);
+        const PROJECT_JSON_PATH = getAbsolutePath(projectDirectory, projectFile);
 
         // Load the project file.
-        const projectJSON = JSON.parse(
-            await readFile(projectJSONPath, "utf8")
+        PROJECT_JSON = JSON.parse(
+            await readFile(PROJECT_JSON_PATH, "utf8")
         );
 
         // Add all plugins from the project file.
-        for (let pluginName of projectJSON.plugins) {
+        for (let pluginName of PROJECT_JSON.plugins) {
             pluginNames.push(pluginName);
         }
 
         // Add all input files from the project file.
-        for (let inputPattern in projectJSON.files) {
+        for (let inputPattern in PROJECT_JSON.files) {
             // Get a list of input files that match the input file pattern.
             const inputPaths = await glob(
                 path.join(projectDirectory, inputPattern)
@@ -251,7 +258,7 @@ async function main () {
 
                 const outputPath = setFileExtension(
                     inputPath,
-                    projectJSON.files[inputPattern]
+                    PROJECT_JSON.files[inputPattern]
                 );
 
                 FILE_IO_MAP[inputPath] = outputPath;
@@ -298,8 +305,45 @@ async function main () {
             // Set the output file to an empty string.
             let outputFileString = "";
 
-            // For each line of the input file:
-            for (let inputString of inputFileString.split("\n")) {
+            // If line-by-line parsing is enabled:
+            if (args.values.lines || PROJECT_JSON.lines) {
+                // For each line of the input file:
+                for (let inputString of inputFileString.split("\n")) {
+                    // Trim the line.
+                    inputString = inputString.trim();
+
+                    // If the line is empty, return.
+                    if (inputString === "") {
+                        continue;
+                    }
+
+                    // Parse the line as a JSON array.
+                    let input = JSON.parse(inputString);
+
+                    // If this is a single object, add it to an array.
+                    if (typeof input[0] === 'undefined') {
+                        input = [ input ];
+                    }
+
+                    // Process the input through each plugin.
+                    const output = await applyPlugins(
+                        input,
+                        ...plugins
+                    );
+
+                    // Get the output line.
+                    const outputString = JSON.stringify(output);
+
+                    // Add the output line to the string.
+                    outputFileString += outputString + "\n";
+                }
+            } else {
+                // Read the input file.
+                let inputString = await readFile(
+                    inputPath,
+                    "utf-8"
+                );
+
                 // Trim the line.
                 inputString = inputString.trim();
 
