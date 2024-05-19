@@ -1,6 +1,6 @@
 {
   "name": "@zerda.js/runtime",
-  "version": "0.5.1",
+  "version": "0.5.3",
   "description": "Zerda.js Runtime Environment | Cross-platform | Modular | Wide GPU support",
   "main": "src/index.mjs",
   "type": "module",
@@ -29,9 +29,9 @@
   "author": "Ashlynne Juniper",
   "license": "MPL-2.0",
   "bugs": {
-    "url": "https://github.com/zerda.js/runtime/issues"
+    "url": "https://github.com/zerdajs/runtime/issues"
   },
-  "homepage": "https://github.com/zerda.js/runtime#readme",
+  "homepage": "https://github.com/zerdajs/runtime#readme",
   "devDependencies": {
     "jest": "^29.7.0"
   },

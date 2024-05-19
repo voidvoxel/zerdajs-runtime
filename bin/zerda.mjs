@@ -407,7 +407,13 @@ async function main () {
             async inputString => {
                 inputString = inputString.trim();
 
-                let input = JSON.parse(inputString);
+                let input;
+
+                try {
+                    input = JSON.parse(inputString);
+                } catch {
+                    input = inputString;
+                }
 
                 if (typeof input[0] === 'undefined') {
                     input = [ input ];
